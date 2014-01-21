@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/roccojanse/js-platformer",
   "devDependencies": {
-    "grunt": "~0.4.2"
+    "grunt": "~0.4.2",
+    "grunt-contrib-sass": "~0.6.0",
+    "grunt-contrib-concat": "~0.3.0"
   }
 }
