@@ -1,0 +1,27 @@
+{
+  "name": "js-platformer",
+  "version": "0.0.1",
+  "description": "javascript platform game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roccojanse/js-platformer.git"
+  },
+  "keywords": [
+    "javascript",
+    "platformer",
+    "game"
+  ],
+  "author": "Rocco Janse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roccojanse/js-platformer/issues"
+  },
+  "homepage": "https://github.com/roccojanse/js-platformer",
+  "devDependencies": {
+    "grunt": "~0.4.2"
+  }
+}
