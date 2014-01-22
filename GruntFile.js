@@ -26,6 +26,23 @@ module.exports = function(grunt) {
 				src: ['src/js/intro.js', 'src/js/base.js', 'src/js/outro.js'],
 				dest: 'www/js/<%= pkg.name %>.js',
 			}
+		},
+
+		jshint: {
+
+			files: ['src/js/**/*.js'],
+
+			options: {
+
+				undef: true,
+				unused: true,
+
+				globals: {
+					jQuery: true,
+					console: true,
+					module: true
+				}
+			}
 		}/*,
 		uglify: {
 			options: {
@@ -41,9 +58,10 @@ module.exports = function(grunt) {
 	// load plugins
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 
 	// define task(s)
-	grunt.registerTask('default', ['sass', 'concat']);
+	grunt.registerTask('default', ['sass', 'concat', 'jshint']);
 
 	// A very basic default task.
 	// grunt.registerTask('default', 'Log some stuff.', function() {
