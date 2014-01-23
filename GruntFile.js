@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 					style: 'expanded'
 				},
 				files: {
-					'www/css/<%= pkg.name %>-<%= pkg.version %>.css': ['src/scss/main.scss']
+					'www/css/<%= pkg.name %>.css': ['src/scss/main.scss']
 				}
 			}
 		},
@@ -23,14 +23,19 @@ module.exports = function(grunt) {
 			// 	separator: '\n',
 			// },
 			dist: {
-				src: ['src/js/intro.js', 'src/js/base.js', 'src/js/outro.js'],
+				src: [
+					'src/js/intro.js', 
+					'src/js/main.js', 
+					'src/js/outro.js'
+				],
 				dest: 'www/js/<%= pkg.name %>.js',
 			}
 		},
 
 		jshint: {
 
-			files: ['src/js/**/*.js'],
+			//files: ['src/js/**/*.js'],,
+			files: ['www/js/<%= pkg.name %>.js'],
 
 			options: {
 
@@ -40,8 +45,19 @@ module.exports = function(grunt) {
 				globals: {
 					jQuery: true,
 					console: true,
-					module: true
+					module: true,
+					'document': true,
+					$: true,
+					'window': true
 				}
+			}
+		},
+
+		jsdoc: {
+			dist: {
+				//src: ['www/js/<%= pkg.name %>.js'],
+				src: ['src/*.js'],
+				dest: 'docs'
 			}
 		}/*,
 		uglify: {
@@ -59,9 +75,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-jsdoc-plugin');
 
 	// define task(s)
 	grunt.registerTask('default', ['sass', 'concat', 'jshint']);
+
+	grunt.registerTask('build', [/*'sass', 'jshint', */'concat', 'jsdoc']);
 
 	// A very basic default task.
 	// grunt.registerTask('default', 'Log some stuff.', function() {
