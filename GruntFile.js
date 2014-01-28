@@ -79,15 +79,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-jsdoc-plugin');
 
 	// define task(s)
 	grunt.registerTask('default', ['sass', 'concat', 'jshint']);
 
-	grunt.registerTask('build', [/*'sass', 'jshint', */'concat', 'jsdoc']);
-
-	// A very basic default task.
-	// grunt.registerTask('default', 'Log some stuff.', function() {
-	// 	grunt.log.write('Logging some stuff...').ok();
-	// });
 };
