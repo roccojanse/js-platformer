@@ -1,5 +1,3 @@
-window.Game = window.Game || {};
-
-(function($, Game) {
+(function($) {
 
     "use strict";

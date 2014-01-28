@@ -24,8 +24,9 @@ module.exports = function(grunt) {
 			// },
 			dist: {
 				src: [
-					'src/js/intro.js', 
-					'src/js/main.js', 
+					'src/js/intro.js',
+					'src/js/raf.polyfill.js', 
+					'src/js/game.js', 
 					'src/js/outro.js'
 				],
 				dest: 'www/js/<%= pkg.name %>.js',
@@ -34,8 +35,11 @@ module.exports = function(grunt) {
 
 		jshint: {
 
-			//files: ['src/js/**/*.js'],,
-			files: ['www/js/<%= pkg.name %>.js'],
+			files: [
+				'src/js/raf.polyfill.js',
+				'src/js/game.js'
+			],
+			//files: ['www/js/<%= pkg.name %>.js'],
 
 			options: {
 
@@ -46,9 +50,9 @@ module.exports = function(grunt) {
 					jQuery: true,
 					console: true,
 					module: true,
-					'document': true,
+					document: true,
 					$: true,
-					'window': true
+					window: true
 				}
 			}
 		},
