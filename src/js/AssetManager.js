@@ -20,26 +20,37 @@
     $.extend(GFW.AssetManager.prototype, {
         /** @lends GFW.AssetManager */
 
+        /**
+         * adds multiple assets at once to the assets queue
+         * @param {array} assetsArray Array of assetobjects
+         * @see #GFW.AssetManager.add
+         * @returns void
+         */
         addAssets: function(assetsArray) {
             for (var i = 0; i < assetsArray.length; i++) {
                 this.add(assetsArray[i].id, assetsArray[i]);
             }
         },
 
+        /**
+         * adds an asset to the assets queue
+         * @param {string} id Asset ID (used for asset retrieval)
+         * @param {object} asset Asset object ({object}.id required)
+         * @returns void
+         */
         add: function(id, asset) {
             this._assets[id] = asset;
             this._assets[id].id = id;
             this._total += 1;
         },
 
-        load: function(cb) {
+        /**
+         * starts (pre)loading the asset queue
+         * @returns void
+         */
+        load: function() {
 
             var _this = this;
-
-            // set callback if defined
-            if (typeof cb === 'function') {
-                this.onComplete = cb;
-            };
 
             for (id in this._assets) {
 
@@ -101,31 +112,71 @@
 
         },
 
+        /**
+         * updates current progress and triggers callbacks
+         * @returns void
+         */
         update: function() {
 
             this._progress = Math.round(((this._loaded + this._errors) / this._total)*100);
+
+            this.onProgress(this._total, this._loaded, this._progress);
             
             if (this._loaded === this._total) {
                 this.onComplete();
             }
         },
 
+        /**
+         * default oncomplete function
+         * @returns void
+         */
         onComplete: function() {
             return;
         },
 
+        /**
+         * default onprogress function
+         * @returns {object} stats Object containing total assets, loaded assets and total progress in percs
+         */
+        onProgress: function(total, loaded, progress) {
+            return {
+                'total': total,
+                'loaded': loaded,
+                'progress': progress
+            }
+        },
+
+        /**
+         * is completed check
+         * @returns {boolean} completed True or false
+         */
         isComplete: function() {
             return (this._loaded + this._errors) === this._total;
         },
 
+        /**
+         * returns asset object corresponding to id
+         * @param {string} id Asset ID to retrieve
+         * @returns {object} asset Asset object
+         */
         get: function(id) {
             return this._assets[id];
         },
 
+        /**
+         * returns asset from manager cache
+         * @param {string} id Asset ID to retrieve
+         * @returns {HTMLObject} asset Asset
+         */
         getAsset: function(id) {
             return this._cache[id];
         },
 
+        /**
+         * clears the asset manager from data
+         * @returns void
+         */
         clear: function() {
             this._assets = {};
             this._cache = {};

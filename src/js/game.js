@@ -60,26 +60,23 @@
                 type: 'image'
             });
 
-            AssetManager.load(function() {
-
-               
-                //console.log($('html')[0], document.documentElement);
+            AssetManager.onComplete = function() {
                 
-                // var img = $('<img>')
-                //     .attr('id', 'splash')
-                //     .attr('src', assetManager.get('splash').path)
-                //     .attr('width', assetManager.get('splash').width*_this._scaleFactor);
-                //     //.attr('height', Math.round(assetManager.get('splash').height*_this._scaleFactor));
-
                 var img = AssetManager.getAsset('splash');
                 console.log('COMPLETE', AssetManager.isComplete());
 
                 //console.log(img);
-                $(document.body).append(img);
+                $(document.body).append(img);    
 
-            });
+            }
 
-            console.log('COMPLETE', AssetManager.isComplete());
+            AssetManager.onProgress = function(t, l, p) {
+                console.log(t, l, p);
+            }
+
+            AssetManager.load();
+
+            console.log('COMPLETE?', AssetManager.isComplete());
 
         },
 
