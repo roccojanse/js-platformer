@@ -8,19 +8,16 @@
         /** @lends Game */
 
         // variables
-        var _this = this; 
-        var _desiredWidth = 1024;
-        var _desiredHeight = 768;
-        var _actualWidth = $(window).width();
-        var _actualHeight = $(window).height();
+        var _this = this,
+            _desiredWidth = 1024,
+            _desiredHeight = 768,
+            _actualWidth = $(window).width();
 
         // properties
-        this._scaleFactor = Math.round((_actualWidth/_desiredWidth)*100)/100;
+        this._scaleFactor = (_actualWidth < _desiredWidth) ? Math.round((_actualWidth/_desiredWidth)*100)/100 : 1;
         this._width = Math.round(_desiredWidth*this._scaleFactor);
         this._height = Math.round(_desiredHeight*this._scaleFactor);
-       
-        console.log('SCALE', _actualWidth/_desiredWidth);
-
+          
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
@@ -63,6 +60,7 @@
             AssetManager.onComplete = function() {
                 
                 var img = AssetManager.getAsset('splash');
+                $(img).width(Math.round(img.width*_this._scaleFactor));
                 console.log('COMPLETE', AssetManager.isComplete());
 
                 //console.log(img);

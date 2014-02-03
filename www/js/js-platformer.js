@@ -36,33 +36,185 @@
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
-    var AssetManager = function() {
-        /** @lends AssetManager */
+    GFW.AssetManager = function() {
+        /** @lends GFW.AssetManager */
 
         // variables
         this._assets = {};
+        this._loaded = 0;
+        this._total = 0;
+        this._progress = 0;
+        this._errors = 0;
+        this._cache = {};
 
     };
 
-    $.extend(AssetManager.prototype, {
-        /** @lends AssetManager */
+    $.extend(GFW.AssetManager.prototype, {
+        /** @lends GFW.AssetManager */
 
+        /**
+         * adds multiple assets at once to the assets queue
+         * @param {array} assetsArray Array of assetobjects
+         * @see #GFW.AssetManager.add
+         * @returns void
+         */
         addAssets: function(assetsArray) {
             for (var i = 0; i < assetsArray.length; i++) {
-                this.add(assetsArray[i].id, assetsArray[i].src);
+                this.add(assetsArray[i].id, assetsArray[i]);
             }
         },
 
+        /**
+         * adds an asset to the assets queue
+         * @param {string} id Asset ID (used for asset retrieval)
+         * @param {object} asset Asset object ({object}.id required)
+         * @returns void
+         */
         add: function(id, asset) {
             this._assets[id] = asset;
+            this._assets[id].id = id;
+            this._total += 1;
         },
 
+        /**
+         * starts (pre)loading the asset queue
+         * @returns void
+         */
+        load: function() {
+
+            var _this = this;
+
+            for (id in this._assets) {
+
+                var asset = this._assets[id];
+
+                // image
+                if (asset.type == 'image') {
+                    var img = new Image();
+                    img.src = asset.path;
+
+                    img.addEventListener('load', function() {    
+                        _this._loaded += 1;
+                        _this._assets[id].width = this.width;
+                        _this._assets[id].height = this.height;
+                        _this._cache[id] = img;
+                        _this.update();
+                    }, false);
+
+                    img.addEventListener('error', function(e) {
+                        _this._errors += 1;
+                        _this._assets[id] = e;
+                        _this._cache[id] = img;
+                        _this.update();
+                    }, false);
+
+                };
+
+                // audio
+                if (asset.type == 'audio') {
+
+                    var audio = document.createElement('audio');
+                    var srcMp3 = document.createElement('source');
+                    var srcOgg = document.createElement('source');
+        
+                    audio.id = id;
+                    audio.autoplay = false;
+                    audio.preload = false;
+
+                    audio.addEventListener('progress', function() {
+                        _this._loaded += 1;
+                        _this.update();
+                        audio.removeEventListener('progress');
+                    });
+
+                    srcMp3.src = asset.path;
+                    srcMp3.type = 'audio/mpeg';
+
+                    srcOgg.src = asset.path.replace('.mp3', '.ogg');
+                    srcOgg.type = 'audio/ogg';
+
+                    audio.appendChild(srcOgg);
+                    audio.appendChild(srcMp3);
+
+                    $(document.body).append(audio);
+
+                };
+
+            }            
+
+        },
+
+        /**
+         * updates current progress and triggers callbacks
+         * @returns void
+         */
+        update: function() {
+
+            this._progress = Math.round(((this._loaded + this._errors) / this._total)*100);
+
+            this.onProgress(this._total, this._loaded, this._progress);
+            
+            if (this._loaded === this._total) {
+                this.onComplete();
+            }
+        },
+
+        /**
+         * default oncomplete function
+         * @returns void
+         */
+        onComplete: function() {
+            return;
+        },
+
+        /**
+         * default onprogress function
+         * @returns {object} stats Object containing total assets, loaded assets and total progress in percs
+         */
+        onProgress: function(total, loaded, progress) {
+            return {
+                'total': total,
+                'loaded': loaded,
+                'progress': progress
+            }
+        },
+
+        /**
+         * is completed check
+         * @returns {boolean} completed True or false
+         */
+        isComplete: function() {
+            return (this._loaded + this._errors) === this._total;
+        },
+
+        /**
+         * returns asset object corresponding to id
+         * @param {string} id Asset ID to retrieve
+         * @returns {object} asset Asset object
+         */
         get: function(id) {
             return this._assets[id];
         },
 
+        /**
+         * returns asset from manager cache
+         * @param {string} id Asset ID to retrieve
+         * @returns {HTMLObject} asset Asset
+         */
+        getAsset: function(id) {
+            return this._cache[id];
+        },
+
+        /**
+         * clears the asset manager from data
+         * @returns void
+         */
         clear: function() {
             this._assets = {};
+            this._cache = {};
+            this._loaded = 0;
+            this._erros = 0;
+            this._total = 0;
         }
 
     });
@@ -73,16 +225,16 @@
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
-    var ObjectManager = function() {
-        /** @lends ObjectManager */
+    GFW.ObjectManager = function() {
+        /** @lends GFW.ObjectManager */
 
         // variables
         this._objects = [];
 
     };
 
-    $.extend(ObjectManager.prototype, {
-        /** @lends ObjectManager */
+    $.extend(GFW.ObjectManager.prototype, {
+        /** @lends GFW.ObjectManager */
 
         add: function(object) {
             this._objects.push(object);
@@ -99,14 +251,43 @@
     var Game = function() {
         /** @lends Game */
 
+        this._scaleFactor = 1;
+
         // variables
+        var _this = this; 
+        var _desiredWidth = 1024;
+        var _desiredHeight = 768;
+        var _actualWidth = $(window).width();
+        var _actualHeight = $(window).height();
+
+        if (_actualWidth < _desiredWidth) {
+            this._scaleFactor = Math.round((_actualWidth/_desiredWidth)*100)/100;
+        }
+
+        // properties
+        this._width = Math.round(_desiredWidth*this._scaleFactor);
+        //this._height = Math.round(_desiredHeight*this._scaleFactor);
+       
+        
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
 
-        window.assetManager = new AssetManager();
-        window.objectManager = new ObjectManager();
-        
+        // global managers
+        window.AssetManager = new GFW.AssetManager();
+        window.ObjectManager = new GFW.ObjectManager();
+
+        // game states
+        this._gameStates = {
+            'INIT': 0,
+            'LOADING': 1,
+            'MAINMENU': 2,
+            'PLAYING': 3
+        }
+
+
+        this.init();
+
         return this;
 
         
@@ -115,6 +296,38 @@
 
     $.extend(Game.prototype, {
         /** @lends Game */
+
+        init: function() {
+
+            var _this = this;
+
+            this._gameState = this._gameStates.INIT;
+
+            AssetManager.add('splash', {
+                path: 'assets/img/bg-splash.png',
+                type: 'image'
+            });
+
+            AssetManager.onComplete = function() {
+                
+                var img = AssetManager.getAsset('splash');
+                $(img).width(Math.round(img.width*_this._scaleFactor));
+                console.log('COMPLETE', AssetManager.isComplete());
+
+                //console.log(img);
+                $(document.body).append(img);    
+
+            }
+
+            AssetManager.onProgress = function(t, l, p) {
+                console.log(t, l, p);
+            }
+
+            AssetManager.load();
+
+            console.log('COMPLETE?', AssetManager.isComplete());
+
+        },
 
         /**
          * Main game logic

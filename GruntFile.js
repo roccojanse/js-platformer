@@ -41,8 +41,8 @@ module.exports = function(grunt) {
 
 		jshint: {
 
-			files: jsFiles,
-			//files: ['www/js/<%= pkg.name %>.js'],
+			//files: jsFiles,
+			files: ['www/js/<%= pkg.name %>.js'],
 
 			options: {
 
