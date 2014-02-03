@@ -31,8 +31,68 @@
     }
     
     /**
-     * Game base class
-     * @class Creates base game object
+     * AssetManager class
+     * @class Creates object to hold assets used in the game
+     * @author Rocco Janse, roccojanse@outlook.com
+     * @constructor
+     */
+    var AssetManager = function() {
+        /** @lends AssetManager */
+
+        // variables
+        this._assets = {};
+
+    };
+
+    $.extend(AssetManager.prototype, {
+        /** @lends AssetManager */
+
+        addAssets: function(assetsArray) {
+            for (var i = 0; i < assetsArray.length; i++) {
+                this.add(assetsArray[i].id, assetsArray[i].src);
+            }
+        },
+
+        add: function(id, asset) {
+            this._assets[id] = asset;
+        },
+
+        get: function(id) {
+            return this._assets[id];
+        },
+
+        clear: function() {
+            this._assets = {};
+        }
+
+    });
+    
+    /**
+     * ObjectManager class
+     * @class Creates object to hold objects used in the game
+     * @author Rocco Janse, roccojanse@outlook.com
+     * @constructor
+     */
+    var ObjectManager = function() {
+        /** @lends ObjectManager */
+
+        // variables
+        this._objects = [];
+
+    };
+
+    $.extend(ObjectManager.prototype, {
+        /** @lends ObjectManager */
+
+        add: function(object) {
+            this._objects.push(object);
+        }
+
+    });
+
+    /**
+     * Game Main class
+     * @class Creates main game object
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
@@ -43,6 +103,13 @@
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
+
+        window.assetManager = new AssetManager();
+        window.objectManager = new ObjectManager();
+        
+        return this;
+
+        
 
     };
 
@@ -71,6 +138,7 @@
          * @return void
          */
         start: function() {
+
             this.mainLoop();
         },
 
@@ -88,5 +156,6 @@
         }
 
     });
+
 
 })(jQuery);

@@ -1,7 +1,18 @@
 'use strict';
 
 module.exports = function(grunt) {
-	// Do grunt-related things in here
+	
+	var jsFiles = [
+		'src/js/raf.polyfill.js',
+		'src/js/AssetManager.js',
+		'src/js/ObjectManager.js',
+		'src/js/Game.js' 
+	];
+	
+	var jsConcatFiles = jsFiles.concat();
+	jsConcatFiles.unshift('src/js/intro.js');
+	jsConcatFiles.push('src/js/outro.js');
+
 
 	// config
 	grunt.initConfig({
@@ -23,22 +34,14 @@ module.exports = function(grunt) {
 			// 	separator: '\n',
 			// },
 			dist: {
-				src: [
-					'src/js/intro.js',
-					'src/js/raf.polyfill.js', 
-					'src/js/game.js', 
-					'src/js/outro.js'
-				],
+				src: jsConcatFiles,
 				dest: 'www/js/<%= pkg.name %>.js',
 			}
 		},
 
 		jshint: {
 
-			files: [
-				'src/js/raf.polyfill.js',
-				'src/js/game.js'
-			],
+			files: jsFiles,
 			//files: ['www/js/<%= pkg.name %>.js'],
 
 			options: {
@@ -55,24 +58,8 @@ module.exports = function(grunt) {
 					window: true
 				}
 			}
-		},
+		}
 
-		jsdoc: {
-			dist: {
-				//src: ['www/js/<%= pkg.name %>.js'],
-				src: ['src/*.js'],
-				dest: 'docs'
-			}
-		}/*,
-		uglify: {
-			options: {
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> *//*\n'
-			},
-			build: {
-				src: 'src/<%= pkg.name %>.js',
-				dest: 'build/<%= pkg.name %>.min.js'
-			}
-		}*/
 	});
 
 	// load plugins

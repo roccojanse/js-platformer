@@ -30,8 +30,14 @@
     
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" charset="utf-8"></script>
 
+    <script charset="utf-8">
+        var GFW = GFW || {};
+    </script>
+
     <script src="../src/js/raf.polyfill.js" charset="utf-8"></script>
-    <script src="../src/js/game.js" charset="utf-8"></script>
+    <script src="../src/js/AssetManager.js" charset="utf-8"></script>
+    <script src="../src/js/ObjectManager.js" charset="utf-8"></script>
+    <script src="../src/js/Game.js" charset="utf-8"></script>
     
     <!--<script src="js/js-platformer.js" charset="utf-8"></script>-->
     
@@ -43,17 +49,18 @@
 
         $(document).ready(function() {
 
-            var game = new Game();
+            var g = new Game();
 
-            console.log(game);
+            console.log(AssetManager, ObjectManager, g);
 
         });
+
     </script>
 
 </head>
 <body>
 
-    <div id="container"></div>
+<input type="file" name="sel" id="sel" value="" />
     
 </body>
 </html>

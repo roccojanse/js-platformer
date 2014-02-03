@@ -1,6 +1,6 @@
     /**
-     * Game base class
-     * @class Creates base game object
+     * Game Main class
+     * @class Creates main game object
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
@@ -8,14 +8,80 @@
         /** @lends Game */
 
         // variables
+        var _this = this; 
+        var _desiredWidth = 1024;
+        var _desiredHeight = 768;
+        var _actualWidth = $(window).width();
+        var _actualHeight = $(window).height();
+
+        // properties
+        this._scaleFactor = Math.round((_actualWidth/_desiredWidth)*100)/100;
+        this._width = Math.round(_desiredWidth*this._scaleFactor);
+        this._height = Math.round(_desiredHeight*this._scaleFactor);
+       
+        console.log('SCALE', _actualWidth/_desiredWidth);
+
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
+
+        // global managers
+        window.AssetManager = new GFW.AssetManager();
+        window.ObjectManager = new GFW.ObjectManager();
+
+        // game states
+        this._gameStates = {
+            'INIT': 0,
+            'LOADING': 1,
+            'MAINMENU': 2,
+            'PLAYING': 3
+        }
+
+
+        this.init();
+
+        return this;
+
+        
 
     };
 
     $.extend(Game.prototype, {
         /** @lends Game */
+
+        init: function() {
+
+            var _this = this;
+
+            this._gameState = this._gameStates.INIT;
+
+            AssetManager.add('splash', {
+                path: 'assets/img/bg-splash.png',
+                type: 'image'
+            });
+
+            AssetManager.load(function() {
+
+               
+                //console.log($('html')[0], document.documentElement);
+                
+                // var img = $('<img>')
+                //     .attr('id', 'splash')
+                //     .attr('src', assetManager.get('splash').path)
+                //     .attr('width', assetManager.get('splash').width*_this._scaleFactor);
+                //     //.attr('height', Math.round(assetManager.get('splash').height*_this._scaleFactor));
+
+                var img = AssetManager.getAsset('splash');
+                console.log('COMPLETE', AssetManager.isComplete());
+
+                //console.log(img);
+                $(document.body).append(img);
+
+            });
+
+            console.log('COMPLETE', AssetManager.isComplete());
+
+        },
 
         /**
          * Main game logic
@@ -39,6 +105,7 @@
          * @return void
          */
         start: function() {
+
             this.mainLoop();
         },
 
