@@ -84,7 +84,7 @@
 
             var _this = this;
 
-            for (id in this._assets) {
+            for (var id in this._assets) {
 
                 var asset = this._assets[id];
 
@@ -108,7 +108,7 @@
                         _this.update();
                     }, false);
 
-                };
+                }
 
                 // audio
                 if (asset.type == 'audio') {
@@ -138,7 +138,7 @@
 
                     $(document.body).append(audio);
 
-                };
+                }
 
             }            
 
@@ -176,7 +176,7 @@
                 'total': total,
                 'loaded': loaded,
                 'progress': progress
-            }
+            };
         },
 
         /**
@@ -252,17 +252,14 @@
         /** @lends Game */
 
         // variables
-        var _this = this,
-            _desiredWidth = 1024,
-            _desiredHeight = 768,
-            _actualWidth = $(window).width();
-
+        var _this = this;
+            
         // properties
         this._container = $('#game-container');
+        this._width = 1024;
+        this._height = 768;
         this._scaleFactor = 1;
-        this._width = _desiredWidth;
-        this._height = _desiredHeight;
-          
+  
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
@@ -277,7 +274,7 @@
             'LOADING': 1,
             'MAINMENU': 2,
             'PLAYING': 3
-        }
+        };
 
         // do init
         this.init();
@@ -293,15 +290,16 @@
 
         init: function() {
 
-            var _this = this;
+            var _this = this,
+                _winWidth = $(window).width();
 
             // set gamestate to init
             this._gameState = this._gameStates.INIT;
 
             // set proportions and scaling
-            this._scaleFactor = (_actualWidth < _desiredWidth) ? Math.round((_actualWidth/_desiredWidth)*100)/100 : 1;
-            this._width = Math.round(_desiredWidth*this._scaleFactor);
-            this._height = Math.round(_desiredHeight*this._scaleFactor);
+            this._scaleFactor = (_winWidth < this._width) ? Math.round((_winWidth/this._width)*100)/100 : 1;
+            this._width = Math.round(this._width*this._scaleFactor);
+            this._height = Math.round(this._height*this._scaleFactor);
 
 
 
@@ -312,19 +310,23 @@
             });
 
             AssetManager.onComplete = function() {
+
+                var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
+                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', Math.round(400*_this._scaleFactor), 20, Math.round(30*_this._scaleFactor), Math.round(750*_this._scaleFactor), 0);
+
                 
-                var img = AssetManager.getAsset('splash');
-                $(img).width(Math.round(img.width*_this._scaleFactor));
-                console.log('COMPLETE', AssetManager.isComplete());
+                // var img = AssetManager.getAsset('splash');
+                // $(img).width(Math.round(img.width*_this._scaleFactor));
+                // console.log('COMPLETE', AssetManager.isComplete());
 
-                //console.log(img);
-                _this._container.append(img);    
+                console.log(splash, copy);
+                _this._container.append(splash).append(copy);    
 
-            }
+            };
 
             AssetManager.onProgress = function(t, l, p) {
                 console.log(t, l, p);
-            }
+            };
 
             AssetManager.load();
 

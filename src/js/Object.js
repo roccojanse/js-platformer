@@ -17,7 +17,7 @@
         this._height = h;
         this._pos = { x: x, y: y };
         this._rotation = r;
-        this._visible = true,
+        this._visible = true;
         this._zoomlevel = 1;
 
         this._$object = $(document.createElement('div'));

@@ -52,7 +52,7 @@
 
             var _this = this;
 
-            for (id in this._assets) {
+            for (var id in this._assets) {
 
                 var asset = this._assets[id];
 
@@ -76,7 +76,7 @@
                         _this.update();
                     }, false);
 
-                };
+                }
 
                 // audio
                 if (asset.type == 'audio') {
@@ -106,7 +106,7 @@
 
                     $(document.body).append(audio);
 
-                };
+                }
 
             }            
 
@@ -144,7 +144,7 @@
                 'total': total,
                 'loaded': loaded,
                 'progress': progress
-            }
+            };
         },
 
         /**
