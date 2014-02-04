@@ -30,7 +30,7 @@
             'LOADING': 1,
             'MAINMENU': 2,
             'PLAYING': 3
-        }
+        };
 
         // do init
         this.init();
@@ -60,7 +60,6 @@
 
 
 
-
             AssetManager.add('splash', {
                 path: 'assets/img/bg-splash.png',
                 type: 'image'
@@ -75,11 +74,11 @@
                 //console.log(img);
                 _this._container.append(img);    
 
-            }
+            };
 
             AssetManager.onProgress = function(t, l, p) {
                 console.log(t, l, p);
-            }
+            };
 
             AssetManager.load();
 
