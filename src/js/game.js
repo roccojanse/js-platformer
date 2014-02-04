@@ -66,13 +66,16 @@
             });
 
             AssetManager.onComplete = function() {
-                
-                var img = AssetManager.getAsset('splash');
-                $(img).width(Math.round(img.width*_this._scaleFactor));
-                console.log('COMPLETE', AssetManager.isComplete());
 
-                //console.log(img);
-                _this._container.append(img);    
+                var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
+
+                
+                // var img = AssetManager.getAsset('splash');
+                // $(img).width(Math.round(img.width*_this._scaleFactor));
+                // console.log('COMPLETE', AssetManager.isComplete());
+
+                console.log(splash);
+                _this._container.append(splash.getSprite());    
 
             };
 
