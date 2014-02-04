@@ -29,6 +29,9 @@
             'background-size': this._width + 'px ' + this._height + 'px'
         });
 
+        this._$object.addClass('sprite');
+
+        return this._$object;
     };
 
     $.extend(GFW.Sprite.prototype, GFW.Object.prototype, {
@@ -64,14 +67,6 @@
                 'background-size': this._width + 'px ' + this._height + 'px',
                 'opacity': 1
             });
-        },
-
-        /**
-         * returns actual sprite
-         * @returns void
-         */
-        getSprite: function() {
-            return this._$object;
         }
 
     });

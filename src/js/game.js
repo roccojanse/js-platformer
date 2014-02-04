@@ -68,14 +68,15 @@
             AssetManager.onComplete = function() {
 
                 var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
+                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', Math.round(400*_this._scaleFactor), 20, Math.round(30*_this._scaleFactor), Math.round(750*_this._scaleFactor), 0);
 
                 
                 // var img = AssetManager.getAsset('splash');
                 // $(img).width(Math.round(img.width*_this._scaleFactor));
                 // console.log('COMPLETE', AssetManager.isComplete());
 
-                console.log(splash);
-                _this._container.append(splash.getSprite());    
+                console.log(splash, copy);
+                _this._container.append(splash).append(copy);    
 
             };
 
