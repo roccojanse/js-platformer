@@ -251,24 +251,18 @@
     var Game = function() {
         /** @lends Game */
 
-        this._scaleFactor = 1;
-
         // variables
-        var _this = this; 
-        var _desiredWidth = 1024;
-        var _desiredHeight = 768;
-        var _actualWidth = $(window).width();
-        var _actualHeight = $(window).height();
-
-        if (_actualWidth < _desiredWidth) {
-            this._scaleFactor = Math.round((_actualWidth/_desiredWidth)*100)/100;
-        }
+        var _this = this,
+            _desiredWidth = 1024,
+            _desiredHeight = 768,
+            _actualWidth = $(window).width();
 
         // properties
-        this._width = Math.round(_desiredWidth*this._scaleFactor);
-        //this._height = Math.round(_desiredHeight*this._scaleFactor);
-       
-        
+        this._container = $('#game-container');
+        this._scaleFactor = 1;
+        this._width = _desiredWidth;
+        this._height = _desiredHeight;
+          
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
@@ -285,7 +279,7 @@
             'PLAYING': 3
         }
 
-
+        // do init
         this.init();
 
         return this;
@@ -301,7 +295,16 @@
 
             var _this = this;
 
+            // set gamestate to init
             this._gameState = this._gameStates.INIT;
+
+            // set proportions and scaling
+            this._scaleFactor = (_actualWidth < _desiredWidth) ? Math.round((_actualWidth/_desiredWidth)*100)/100 : 1;
+            this._width = Math.round(_desiredWidth*this._scaleFactor);
+            this._height = Math.round(_desiredHeight*this._scaleFactor);
+
+
+
 
             AssetManager.add('splash', {
                 path: 'assets/img/bg-splash.png',
@@ -315,7 +318,7 @@
                 console.log('COMPLETE', AssetManager.isComplete());
 
                 //console.log(img);
-                $(document.body).append(img);    
+                _this._container.append(img);    
 
             }
 

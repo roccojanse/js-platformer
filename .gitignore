@@ -219,6 +219,6 @@ pip-log.txt
 ###############
 .sass-cache
 
-www/js
-www/css
-node_modules
+www/js/
+www/css/
+node_modules/

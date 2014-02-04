@@ -8,16 +8,14 @@
         /** @lends Game */
 
         // variables
-        var _this = this,
-            _desiredWidth = 1024,
-            _desiredHeight = 768,
-            _actualWidth = $(window).width();
-
+        var _this = this;
+            
         // properties
-        this._scaleFactor = (_actualWidth < _desiredWidth) ? Math.round((_actualWidth/_desiredWidth)*100)/100 : 1;
-        this._width = Math.round(_desiredWidth*this._scaleFactor);
-        this._height = Math.round(_desiredHeight*this._scaleFactor);
-          
+        this._container = $('#game-container');
+        this._width = 1024;
+        this._height = 768;
+        this._scaleFactor = 1;
+  
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
@@ -34,7 +32,7 @@
             'PLAYING': 3
         }
 
-
+        // do init
         this.init();
 
         return this;
@@ -48,9 +46,20 @@
 
         init: function() {
 
-            var _this = this;
+            var _this = this,
+                _winWidth = $(window).width();
 
+            // set gamestate to init
             this._gameState = this._gameStates.INIT;
+
+            // set proportions and scaling
+            this._scaleFactor = (_winWidth < this._width) ? Math.round((_winWidth/this._width)*100)/100 : 1;
+            this._width = Math.round(this._width*this._scaleFactor);
+            this._height = Math.round(this._height*this._scaleFactor);
+
+
+
+
 
             AssetManager.add('splash', {
                 path: 'assets/img/bg-splash.png',
@@ -64,7 +73,7 @@
                 console.log('COMPLETE', AssetManager.isComplete());
 
                 //console.log(img);
-                $(document.body).append(img);    
+                _this._container.append(img);    
 
             }
 
