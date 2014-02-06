@@ -12,9 +12,13 @@
 
     };
 
-    $.extend(GFW.ObjectManager.prototype, {
-        /** @lends GFW.ObjectManager */
-
+    $.extend(GFW.ObjectManager.prototype, /** @lends GFW.ObjectManager */ {
+        
+        /**
+         * adds object to object array
+         * @param {object} object Object to add
+         * @returns void
+         */
         add: function(object) {
             this._objects.push(object);
         }

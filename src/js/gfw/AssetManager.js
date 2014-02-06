@@ -1,8 +1,9 @@
+    /* jshint loopfunc: true */
+
     /**
      * AssetManager class
      * @class Creates object to hold assets used in the game
      * @author Rocco Janse, roccojanse@outlook.com
-     * @constructor
      */
     GFW.AssetManager = function() {
         /** @lends GFW.AssetManager */
@@ -17,13 +18,12 @@
 
     };
 
-    $.extend(GFW.AssetManager.prototype, {
-        /** @lends GFW.AssetManager */
 
+    $.extend(GFW.AssetManager.prototype, /** @lends GFW.AssetManager */ {
+ 
         /**
          * adds multiple assets at once to the assets queue
          * @param {array} assetsArray Array of assetobjects
-         * @see #GFW.AssetManager.add
          * @returns void
          */
         addAssets: function(assetsArray) {
@@ -35,7 +35,7 @@
         /**
          * adds an asset to the assets queue
          * @param {string} id Asset ID (used for asset retrieval)
-         * @param {object} asset Asset object ({object}.id required)
+         * @param {object} asset Asset object (object.id required)
          * @returns void
          */
         add: function(id, asset) {

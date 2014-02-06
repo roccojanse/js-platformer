@@ -4,10 +4,11 @@ module.exports = function(grunt) {
 	
 	var jsFiles = [
 		'src/js/polyfills/raf.polyfill.js',
-		'src/js/polyfills/hand-1.3.5.js',
+		//'src/js/polyfills/hand-1.3.5.js',
 		'src/js/gfw/GFW.js',
 		'src/js/gfw/AssetManager.js',
 		'src/js/gfw/ObjectManager.js',
+		'src/js/gfw/Screen.js',
 		'src/js/gfw/Object.js',
 		'src/js/gfw/Text.js',
 		'src/js/gfw/Sprite.js',

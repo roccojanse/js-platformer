@@ -13,12 +13,15 @@
         /** @lends GFW.Object */
 
         // variables
+        this._container = null;
         this._width = w;
         this._height = h;
         this._pos = { x: x, y: y };
         this._rotation = r;
-        this._visible = true;
+        this._remove = false;
         this._zoomlevel = 1;
+        this._type = 'Object';
+        this._alpha = 1;
 
         this._$object = $(document.createElement('div'));
         this._$object.css({
@@ -39,8 +42,30 @@
         
     };
 
-    $.extend(GFW.Object.prototype, {
-        /** @lends GFW.Object */
+    $.extend(GFW.Object.prototype, /** @lends GFW.Object */ {
+
+        /**
+         * adds object to container (parent) element
+         * @param {HTMLDomElement} container Container jQuery object
+         * @returns void
+         */
+        addTo: function(container) {
+            if (container.attr('id')) {
+                this._container = container.attr('id');
+            }
+            container.append(this._$object);
+            ObjectManager.add(this);
+            return this._$object;
+        },
+
+        /**
+         * sets alpha of object
+         * @param {integer} a Alpha value ( 0 - 1 ) ie: 0.4
+         * @returns void
+         */
+        setAlpha: function(a) {
+            this._alpha = a;
+        },
 
         /**
          * sets rotation of object
@@ -78,7 +103,15 @@
                 'transform': 'rotate(' + this._rotation + 'deg)',
                 'opacity': 1
             });
+        },
+
+        /**
+         * sets container of object
+         * @param {string} container name of id
+         * @returns void
+         */
+        setContainer: function(container) {
+            this._container = container;
         }
 
     });
-    
