@@ -12,9 +12,8 @@
 
     };
 
-    $.extend(GFW.ObjectManager.prototype, {
-        /** @lends GFW.ObjectManager */
-
+    $.extend(GFW.ObjectManager.prototype, /** @lends GFW.ObjectManager */ {
+        
         /**
          * adds object to object manager
          * @param {object} object Game object to add

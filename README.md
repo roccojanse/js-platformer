@@ -1,11 +1,13 @@
 js-platformer
 =============
 
-a javascript platform game for learning/testing purposes
+a javascript platform game in progress for learning/testing purposes
 
 To install:
 Checkout or fork this repo and type
 
-npm install
+open console and run npm install to install grunt dependencies.
+run <i>grunt</i> to build
+run <i>grunt dist</i> to build distribution binaries 
 
-to install grunt dependencies. You should have nodejs installed.
+You should have nodejs installed.

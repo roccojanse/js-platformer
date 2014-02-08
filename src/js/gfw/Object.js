@@ -47,15 +47,14 @@
         /**
          * adds object to container (parent) element
          * @param {HTMLDomElement} container Container jQuery object
-         * @returns void
+         * @returns {integer} Index of object
          */
         addTo: function(container) {
             if (container.attr('id')) {
                 this._container = container.attr('id');
             }
             container.append(this._$object);
-            ObjectManager.add(this);
-            return this._$object;
+            return ObjectManager.add(this);
         },
 
         /**

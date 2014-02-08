@@ -2,6 +2,7 @@
      * Screen class
      * @class Base Screen class. Should be extended.
      * @param {string} name Screen name
+     * @param {HTMLDomElement} container Container element of screen DOM Element
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
@@ -20,19 +21,16 @@
         
         container.append(this._$object);
 
-        console.log(container, this._$object);
-
         return this;
         
     };
 
-    $.extend(GFW.Screen.prototype, {
-        /** @lends GFW.Screen */
-
+    $.extend(GFW.Screen.prototype, /** @lends GFW.Screen */ {
+        
         /**
          * adds object to current screen
          * @param {object} obj Object to add
-         * @returns void
+         * @returns {integer} Index of object
          */
         add: function(obj) {
             this._$object.append(obj.getElement());
