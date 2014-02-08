@@ -8,7 +8,7 @@
         /** @lends Game */
 
         // variables
-        var _this = this;
+        // var _this = this;
             
         // properties
         this._$container = $('#game-container');
@@ -37,8 +37,7 @@
 
     };
 
-    $.extend(Game.prototype, {
-        /** @lends Game */
+    $.extend(Game.prototype, /** @lends Game */ {
 
         init: function() {
 

@@ -37,9 +37,21 @@
         return this;
     };
 
-    $.extend(GFW.Text.prototype, GFW.Object.prototype, {
-        /** @lends GFW.Text */
+    $.extend(GFW.Text.prototype, GFW.Object.prototype, /** @lends GFW.Text */ {
+        
+        /**
+         * set current font of text object
+         * @param {font} font New Font type
+         * @returns void
+         */
+        setFont: function(font) {
+            return font;
+        },
 
+        /**
+         * centers text to container
+         * @returns { void} [description]
+         */
         setCentered: function() {
             this._$object.css({
                 'text-align': 'center'

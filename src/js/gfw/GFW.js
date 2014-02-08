@@ -3,7 +3,6 @@
 
     /**
      * GFW - Game FrameWork
-     * @class GFW Namespace
      * @author Rocco Janse, roccojanse@outlook.com
      * @namespace
      */
@@ -12,8 +11,8 @@
 
     };
 
-    $.extend(GFW.prototype, {
-        /** @lends GFW */
+    $.extend(GFW.prototype, /** @lends GFW */{
+        
 
 
     });

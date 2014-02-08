@@ -35,9 +35,8 @@
         return this;
     };
 
-    $.extend(GFW.Sprite.prototype, GFW.Object.prototype, {
-        /** @lends GFW.Sprite */
-
+    $.extend(GFW.Sprite.prototype, GFW.Object.prototype, /** @lends GFW.Sprite */ {
+        
         /**
          * sets offset of background
          * @param {integer} l Offset left

@@ -42,8 +42,7 @@
         
     };
 
-    $.extend(GFW.Object.prototype, {
-        /** @lends GFW.Object */
+    $.extend(GFW.Object.prototype, /** @lends GFW.Object */ {
 
         /**
          * adds object to container (parent) element
@@ -115,4 +114,3 @@
         }
 
     });
-    
