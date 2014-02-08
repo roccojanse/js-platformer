@@ -67,27 +67,17 @@
 
             AssetManager.onComplete = function() {
 
+                // create screen
                 var splashScreen = new GFW.Screen('splash', _this._$container);
 
+                // add objects to splash screen
                 var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
                 var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
                 copy.setCentered();
 
-                //splash.addTo(splashScreen);
-                //copy.addTo(splashScreen);
-
-                splashScreen.add(splash);
-                splashScreen.add(copy);
-
-                console.log(splash, copy);
-
-                
-                // var img = AssetManager.getAsset('splash');
-                // $(img).width(Math.round(img.width*_this._scaleFactor));
-                // console.log('COMPLETE', AssetManager.isComplete());
-
-                //_this._container.append(splash).append(copy);    
-
+                console.log('ADDED', splashScreen.add(splash));
+                console.log(splashScreen.add(copy));
+ 
             };
 
             AssetManager.onProgress = function(t, l, p) {

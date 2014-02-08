@@ -20,6 +20,8 @@
         
         container.append(this._$object);
 
+        console.log(container, this._$object);
+
         return this;
         
     };
@@ -28,14 +30,13 @@
         /** @lends GFW.Screen */
 
         /**
-         * adds object to current screen element
-         * @param {HTMLDomElement} container Container jQuery object
+         * adds object to current screen
+         * @param {object} obj Object to add
          * @returns void
          */
-        add: function(el) {
-            this._$object.append(el);
-            ObjectManager.add(el);
-            return el;
+        add: function(obj) {
+            this._$object.append(obj.getElement());
+            return ObjectManager.add(obj);
         },
 
         /**

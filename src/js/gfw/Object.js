@@ -104,6 +104,14 @@
                 'transform': 'rotate(' + this._rotation + 'deg)',
                 'opacity': 1
             });
+        },
+        
+        /**
+         * returns objects HTML element
+         * @return {HTMLDOMElement} Html element of object
+         */
+        getElement: function() {
+            return this._$object;
         }
 
     });

@@ -15,8 +15,12 @@
     $.extend(GFW.ObjectManager.prototype, {
         /** @lends GFW.ObjectManager */
 
+        /**
+         * adds object to object manager
+         * @param {object} object Game object to add
+         */
         add: function(object) {
-            this._objects.push(object);
+            return this._objects.push(object);
         }
 
     });
