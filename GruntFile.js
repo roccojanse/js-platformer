@@ -8,6 +8,7 @@ module.exports = function(grunt) {
 		'src/js/gfw/GFW.js',
 		'src/js/gfw/AssetManager.js',
 		'src/js/gfw/ObjectManager.js',
+		'src/js/gfw/Screen.js',
 		'src/js/gfw/Object.js',
 		'src/js/gfw/Text.js',
 		'src/js/gfw/Sprite.js',
@@ -64,9 +65,9 @@ module.exports = function(grunt) {
 				src: ['src/js/gfw/*.js', 'README.md'], 
 				//src: ['www/js/<%= pkg.name %>.js', 'README.md'],
 				options: {
-					destination: 'dist/docs',
+					destination: 'dist/docs'
 					//template: '',
-					private: true
+					//private: true
 				}
 			}
 		}

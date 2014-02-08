@@ -11,7 +11,7 @@
         var _this = this;
             
         // properties
-        this._container = $('#game-container');
+        this._$container = $('#game-container');
         this._width = 1024;
         this._height = 768;
         this._scaleFactor = 1;
@@ -19,10 +19,6 @@
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
-
-        // global managers
-        window.AssetManager = new GFW.AssetManager();
-        window.ObjectManager = new GFW.ObjectManager();
 
         // game states
         this._gameStates = {
@@ -56,8 +52,12 @@
             this._scaleFactor = (_winWidth < this._width) ? Math.round((_winWidth/this._width)*100)/100 : 1;
             this._width = Math.round(this._width*this._scaleFactor);
             this._height = Math.round(this._height*this._scaleFactor);
+            this._$container.width(this._width);
+            this._$container.height(this._height);
 
-
+            // global managers
+            window.AssetManager = new GFW.AssetManager(this._scaleFactor);
+            window.ObjectManager = new GFW.ObjectManager();
 
 
             AssetManager.add('splash', {
@@ -67,16 +67,26 @@
 
             AssetManager.onComplete = function() {
 
+                var splashScreen = new GFW.Screen('splash', _this._$container);
+
                 var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
-                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', Math.round(400*_this._scaleFactor), 20, Math.round(30*_this._scaleFactor), Math.round(750*_this._scaleFactor), 0);
+                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
+                copy.setCentered();
+
+                //splash.addTo(splashScreen);
+                //copy.addTo(splashScreen);
+
+                splashScreen.add(splash);
+                splashScreen.add(copy);
+
+                console.log(splash, copy);
 
                 
                 // var img = AssetManager.getAsset('splash');
                 // $(img).width(Math.round(img.width*_this._scaleFactor));
                 // console.log('COMPLETE', AssetManager.isComplete());
 
-                console.log(splash, copy);
-                _this._container.append(splash).append(copy);    
+                //_this._container.append(splash).append(copy);    
 
             };
 

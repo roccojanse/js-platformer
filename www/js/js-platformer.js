@@ -762,10 +762,11 @@ var HANDJS = HANDJS || {};
     /**
      * AssetManager class
      * @class Creates object to hold assets used in the game
+     * @param {integer} [scale] ScaleFactor
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
-    GFW.AssetManager = function() {
+    GFW.AssetManager = function(scale) {
         /** @lends GFW.AssetManager */
 
         // variables
@@ -775,6 +776,7 @@ var HANDJS = HANDJS || {};
         this._progress = 0;
         this._errors = 0;
         this._cache = {};
+        this._scale = scale || 1;
 
     };
 
@@ -821,12 +823,14 @@ var HANDJS = HANDJS || {};
                 if (asset.type == 'image') {
                     var img = new Image();
                     img.src = asset.path;
+                    img.width = Math.round(this.width*_this.scaleFactor);
+                    img.height = Math.round(this.height*_this.scaleFactor);
 
                     img.addEventListener('load', function() {    
                         _this._loaded += 1;
                         _this._assets[id].width = this.width;
                         _this._assets[id].height = this.height;
-                        _this._cache[id] = img;
+                        _this._cache[id] = this;
                         _this.update();
                     }, false);
 
@@ -972,6 +976,57 @@ var HANDJS = HANDJS || {};
     });
 
     /**
+     * Screen class
+     * @class Base Screen class. Should be extended.
+     * @param {string} name Screen name
+     * @author Rocco Janse, roccojanse@outlook.com
+     * @constructor
+     */
+    GFW.Screen = function(name, container) {
+        /** @lends GFW.Screen */
+
+        // variables
+        this._container = container.attr('id');
+        this._name = name;
+        this._remove = false;
+        this._alpha = 1;
+
+        this._$object = $(document.createElement('div'));
+        this._$object.addClass('screen');
+        this._$object.attr('id', this._name);
+        
+        container.append(this._$object);
+
+        return this;
+        
+    };
+
+    $.extend(GFW.Screen.prototype, {
+        /** @lends GFW.Screen */
+
+        /**
+         * adds object to current screen element
+         * @param {HTMLDomElement} container Container jQuery object
+         * @returns void
+         */
+        add: function(el) {
+            this._$object.append(el);
+            ObjectManager.add(el);
+            return el;
+        },
+
+        /**
+         * sets alpha of screen
+         * @param {integer} a Alpha value ( 0 - 1 ) ie: 0.4
+         * @returns void
+         */
+        setAlpha: function(a) {
+            this._alpha = a;
+        }
+
+    });
+    
+    /**
      * Object class
      * @class Base class for all game objects. Should be extended.
      * @param {integer} w Width
@@ -986,12 +1041,15 @@ var HANDJS = HANDJS || {};
         /** @lends GFW.Object */
 
         // variables
+        this._container = null;
         this._width = w;
         this._height = h;
         this._pos = { x: x, y: y };
         this._rotation = r;
-        this._visible = true;
+        this._remove = false;
         this._zoomlevel = 1;
+        this._type = 'Object';
+        this._alpha = 1;
 
         this._$object = $(document.createElement('div'));
         this._$object.css({
@@ -1014,6 +1072,29 @@ var HANDJS = HANDJS || {};
 
     $.extend(GFW.Object.prototype, {
         /** @lends GFW.Object */
+
+        /**
+         * adds object to container (parent) element
+         * @param {HTMLDomElement} container Container jQuery object
+         * @returns void
+         */
+        addTo: function(container) {
+            if (container.attr('id')) {
+                this._container = container.attr('id');
+            }
+            container.append(this._$object);
+            ObjectManager.add(this);
+            return this._$object;
+        },
+
+        /**
+         * sets alpha of object
+         * @param {integer} a Alpha value ( 0 - 1 ) ie: 0.4
+         * @returns void
+         */
+        setAlpha: function(a) {
+            this._alpha = a;
+        },
 
         /**
          * sets rotation of object
@@ -1058,35 +1139,50 @@ var HANDJS = HANDJS || {};
     /**
      * Text class
      * @class Creates a DOM text element
-     * @param {string} img Image path
+     * @param {string} txt Text to display
      * @param {string} font Font type
-     * @param {integer} w Width
-     * @param {integer} h Height
+     * @param {integer} size Font size
+     * @param {string} color Color ie. rgb(10, 39, 60)
      * @param {integer} x x Position
      * @param {integer} y y Position     
-     * @param {integer} r Rotation in degrees
      * @extends GFW.Object
      * @author Rocco Janse, roccojanse@outlook.com
      * @constructor
      */
-    GFW.Text = function(txt, font, w, h, x, y, r) {
+    GFW.Text = function(txt, font, size, color, x, y, w, h) {
         /** @lends GFW.Text */
 
-        // init object
-        GFW.Object.call(this, w, h, x, y, r);
+        // init object 
+        GFW.Object.call(this, w, h, x, y, 0);
         
         // variables
+        this._type = 'Text';
         this._text = txt;
         this._font = font;
+        this._size = size;
+        this._color = color;
+        
         this._$object.addClass('text ' + this._font);
         this._$object.html(this._text);
+        
+        this._$object.css({
+            'font-family': this._font,
+            'font-size': this._size,
+            'color': this._color,
+            'white-space': 'nowrap'
+        });
 
-        return this._$object;
+        return this;
     };
 
     $.extend(GFW.Text.prototype, GFW.Object.prototype, {
         /** @lends GFW.Text */
 
+        setCentered: function() {
+            this._$object.css({
+                'text-align': 'center'
+            });
+        }
 
     });
     
@@ -1112,6 +1208,7 @@ var HANDJS = HANDJS || {};
         GFW.Object.call(this, w, h, x, y, r);
         
         // variables
+        this._type = 'Sprite';
         this._image = img;
         this._offset = { left: ol, top: ot };
 
@@ -1123,7 +1220,7 @@ var HANDJS = HANDJS || {};
 
         this._$object.addClass('sprite');
 
-        return this._$object;
+        return this;
     };
 
     $.extend(GFW.Sprite.prototype, GFW.Object.prototype, {
@@ -1176,7 +1273,7 @@ var HANDJS = HANDJS || {};
         var _this = this;
             
         // properties
-        this._container = $('#game-container');
+        this._$container = $('#game-container');
         this._width = 1024;
         this._height = 768;
         this._scaleFactor = 1;
@@ -1184,10 +1281,6 @@ var HANDJS = HANDJS || {};
         this._fps = 60;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
-
-        // global managers
-        window.AssetManager = new GFW.AssetManager();
-        window.ObjectManager = new GFW.ObjectManager();
 
         // game states
         this._gameStates = {
@@ -1221,8 +1314,12 @@ var HANDJS = HANDJS || {};
             this._scaleFactor = (_winWidth < this._width) ? Math.round((_winWidth/this._width)*100)/100 : 1;
             this._width = Math.round(this._width*this._scaleFactor);
             this._height = Math.round(this._height*this._scaleFactor);
+            this._$container.width(this._width);
+            this._$container.height(this._height);
 
-
+            // global managers
+            window.AssetManager = new GFW.AssetManager(this._scaleFactor);
+            window.ObjectManager = new GFW.ObjectManager();
 
 
             AssetManager.add('splash', {
@@ -1232,16 +1329,26 @@ var HANDJS = HANDJS || {};
 
             AssetManager.onComplete = function() {
 
+                var splashScreen = new GFW.Screen('splash', _this._$container);
+
                 var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
-                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', Math.round(400*_this._scaleFactor), 20, Math.round(30*_this._scaleFactor), Math.round(750*_this._scaleFactor), 0);
+                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
+                copy.setCentered();
+
+                //splash.addTo(splashScreen);
+                //copy.addTo(splashScreen);
+
+                splashScreen.add(splash);
+                splashScreen.add(copy);
+
+                console.log(splash, copy);
 
                 
                 // var img = AssetManager.getAsset('splash');
                 // $(img).width(Math.round(img.width*_this._scaleFactor));
                 // console.log('COMPLETE', AssetManager.isComplete());
 
-                console.log(splash, copy);
-                _this._container.append(splash).append(copy);    
+                //_this._container.append(splash).append(copy);    
 
             };
 

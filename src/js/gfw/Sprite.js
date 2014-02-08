@@ -20,6 +20,7 @@
         GFW.Object.call(this, w, h, x, y, r);
         
         // variables
+        this._type = 'Sprite';
         this._image = img;
         this._offset = { left: ol, top: ot };
 
@@ -31,7 +32,7 @@
 
         this._$object.addClass('sprite');
 
-        return this._$object;
+        return this;
     };
 
     $.extend(GFW.Sprite.prototype, GFW.Object.prototype, {
