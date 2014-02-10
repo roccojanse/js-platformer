@@ -8,16 +8,18 @@
         /** @lends Game */
 
         // variables
-        // var _this = this;
-        this._loopCount = 0;
+        var _this = this;
             
         // properties
         this._$container = $('#game-container');
-        this._width = 1024;
-        this._height = 768;
+        this._dwidth = 1024;
+        this._dheight = 768;
+        this._width = this._dwidth;
+        this._height = this._dheight;
         this._scaleFactor = 1;
   
         this._fps = 60;
+        this._loopCount = 0;
         this._reqAnimId = null;
         this._lastFrame = new Date().getTime();
 
@@ -29,15 +31,29 @@
             'PLAYING': 3
         };
 
+        // set scale(factor)
+        this.setScale();
+
+        // global managers
+        window.AssetManager = new GFW.AssetManager();
+        window.ObjectManager = new GFW.ObjectManager();
+
         // ingame screens
         this._screens = {};
 
-        // do init
+        // define splash screen
+        this._screens.splash = new GFW.Screen('splash', _this._$container).setAlpha(0);
+
+        // set event handlers
+        $(window).on({
+            resize: GFW.debounce(function() {
+                _this.resize();
+            })
+        });
+
         this.init();
 
         return this;
-
-        
 
     };
 
@@ -45,27 +61,11 @@
 
         init: function() {
 
-            var _this = this,
-                _winWidth = $(window).width();
+            var _this = this;
 
-            // define gingame screens
-            this._screens.splash = new GFW.Screen('splash', this._$container).setAlpha(0);
-
-            // set gamestate to init
             this._gameState = this._gameStates.INIT;
 
-            // set proportions and scaling
-            this._scaleFactor = (_winWidth < this._width) ? Math.round((_winWidth/this._width)*100)/100 : 1;
-            this._width = Math.round(this._width*this._scaleFactor);
-            this._height = Math.round(this._height*this._scaleFactor);
-            this._$container.width(this._width);
-            this._$container.height(this._height);
-
-            // global managers
-            window.AssetManager = new GFW.AssetManager(this._scaleFactor);
-            window.ObjectManager = new GFW.ObjectManager();
-
-
+            // add splash screen assets
             AssetManager.add('splash', {
                 path: 'assets/img/bg-splash.png',
                 type: 'image'
@@ -73,8 +73,12 @@
 
             AssetManager.onComplete = function() {
 
+
+
                 // add objects to splash screen
-                var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
+                var splash = new GFW.Sprite(AssetManager.get('splash').path, 1024, 768, 0, 0, 0, 0, 0);
+                splash.resize(_this._scaleFactor);
+                
                 var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
                 copy.setCentered();
 
@@ -83,8 +87,18 @@
 
                 _this._screens.splash.fadeIn();
 
+                var t = new GFW.Timer();
+                t.onTick = function() {
+                    var dt = t.getDelta();
+                    if (dt > 3) {
+                        t.stop();
+                        _this._screens.splash.fadeOut();
+                    }
+                };
+                t.start();
+
                 _this.start();
- 
+
             };
 
             AssetManager.onProgress = function(t, l, p) {
@@ -93,7 +107,23 @@
 
             AssetManager.load();
 
-            console.log('COMPLETE?', AssetManager.isComplete());
+        },
+
+        /**
+         * resizes and sets game proportions
+         * @return void
+         */
+        setScale: function() {
+
+            var _this = this,
+                _winWidth = $(window).width();
+
+            // set proportions and scaling
+            this._scaleFactor = (_winWidth < this._dwidth) ? Math.round((_winWidth/this._dwidth)*100)/100 : 1;
+            this._width = Math.round(this._dwidth*this._scaleFactor);
+            this._height = Math.round(this._dheight*this._scaleFactor);
+            this._$container.width(this._width);
+            this._$container.height(this._height);
 
         },
 
@@ -102,18 +132,23 @@
          * @return void
          */
         mainLoop: function() {
+            
+            
+            var tm = new Date().getTime(),
+                dt = (tm - this._lastFrame) / 1000;
+                
             this._loopCount += 1;
-            var tm = new Date().getTime();
             this._reqAnimId = window.requestAnimationFrame(this.mainLoop.bind(this));
-            var dt = (tm - this._lastFrame) / 1000;
-            if(dt > 1/15) { dt = 1/15; }
+            //if(dt > 1/15) { dt = 1/15; }
             
             if (this._gameState === this._gameStates.INIT) {
-
                 this._screens.splash.update(dt);
             }
 
-            
+            var objects = ObjectManager.getObjects();
+            for (var i = 0; i < objects.length; i++) {
+                objects[i].update();
+            }
 
             //this.physics.step(dt);
             //this.renderer.drawFrame(dt);
@@ -145,6 +180,14 @@
             if (animId === 0) { return; }
 
             window.cancelAnimationFrame(animId);
+        },
+
+        resize: function() {
+            this.setScale();
+            var objects = ObjectManager.getObjects();
+            for (var i = 0; i < objects.length; i++) {
+                objects[i].resize(this._scaleFactor);
+            }
         }
 
     });

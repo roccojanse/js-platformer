@@ -3,10 +3,9 @@
     /**
      * AssetManager class
      * @class Creates object to hold assets used in the game
-     * @param {integer} [scale] ScaleFactor
      * @author Rocco Janse, roccojanse@outlook.com
      */
-    GFW.AssetManager = function(scale) {
+    GFW.AssetManager = function() {
         /** @lends GFW.AssetManager */
 
         // variables
@@ -16,7 +15,6 @@
         this._progress = 0;
         this._errors = 0;
         this._cache = {};
-        this._scale = scale || 1;
 
     };
 
@@ -62,8 +60,6 @@
                 if (asset.type == 'image') {
                     var img = new Image();
                     img.src = asset.path;
-                    img.width = Math.round(this.width*_this.scaleFactor);
-                    img.height = Math.round(this.height*_this.scaleFactor);
 
                     img.addEventListener('load', function() {    
                         _this._loaded += 1;

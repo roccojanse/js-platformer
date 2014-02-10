@@ -16,6 +16,8 @@
         this._container = null;
         this._width = w;
         this._height = h;
+        this._dwidth = w;
+        this._dheight = h;
         this._pos = { x: x, y: y };
         this._rotation = r;
         this._remove = false;
@@ -86,6 +88,16 @@
         },
 
         /**
+         * resizes object
+         * @param {float} scale Scalefactor
+         * @return void
+         */
+        resize: function(scale) {
+            this._width = this._dwidth*scale;
+            this._height = this._dheight*scale;
+        },
+
+        /**
          * updates object
          * @returns void
          */
@@ -110,6 +122,10 @@
          */
         getElement: function() {
             return this._$object;
+        },
+
+        remove: function() {
+
         }
 
     });

@@ -20,6 +20,10 @@
          */
         add: function(object) {
             return this._objects.push(object);
+        },
+
+        getObjects: function() {
+            return this._objects;
         }
 
     });

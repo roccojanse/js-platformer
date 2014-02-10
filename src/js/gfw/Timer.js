@@ -12,6 +12,7 @@
         this._ticks = 0;
         this._animId = null;
         this._isPaused = false;
+        this._start = 0;
 
     };
 
@@ -50,7 +51,18 @@
          * @return void
          */
         start: function() {
+            this._start = this.getTime();
             this._tick();
+        },
+
+        /**
+         * returns delta time (time elapsed since start of timer) in seconds
+         * @param  {[integer]} [start=timestamp] Timestamp of start time
+         * @return {integer} Delta time in seconds
+         */
+        getDelta: function(start) {
+            var s = start || this._start;
+            return (this.getTime() - s) / 1000;
         },
 
         /**

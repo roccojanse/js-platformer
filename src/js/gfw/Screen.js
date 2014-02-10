@@ -42,7 +42,6 @@
          * @return void
          */
         update: function(dt) {
-
             this._$object.css({
                 'opacity': this._alpha
             });
@@ -72,7 +71,7 @@
             
             t.onTick = function() {
 
-                var dt = (t.getTime() - startTime) / 1000,
+                var dt = t.getDelta(),
                     alpha = (1/d)*dt;
                 
                 _this.setAlpha((_this._alpha < 1) ? parseFloat(alpha) : 1);
@@ -98,7 +97,7 @@
 
             t.onTick = function() {
 
-                var dt = (t.getTime() - startTime) / 1000,
+                var dt = t.getDelta(),
                     alpha = (1/d)*dt;
 
                  _this.setAlpha((_this._alpha > 0) ? 1 - parseFloat(alpha) : 0);
