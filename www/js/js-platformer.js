@@ -988,7 +988,7 @@ var HANDJS = HANDJS || {};
     GFW.Screen = function(name, container) {
         /** @lends GFW.Screen */
 
-        // variables
+        // properties
         this._container = container.attr('id');
         this._name = name;
         this._remove = false;
@@ -1017,16 +1017,140 @@ var HANDJS = HANDJS || {};
         },
 
         /**
+         * updates screen in game loop
+         * @return void
+         */
+        update: function(dt) {
+
+            this._$object.css({
+                'opacity': this._alpha
+            });
+        },
+
+        /**
          * sets alpha of screen
          * @param {integer} a Alpha value ( 0 - 1 ) ie: 0.4
          * @returns void
          */
         setAlpha: function(a) {
             this._alpha = a;
+            return this;
+        },
+
+        /**
+         * fades screen object in
+         * @param  {integer} [duration=1] Duration
+         * @return void
+         */
+        fadeIn: function(duration) {
+
+            var _this = this,
+                d = duration || 1,
+                t = new GFW.Timer(),
+                startTime = t.getTime();
+            
+            t.onTick = function() {
+
+                var dt = (t.getTime() - startTime) / 1000,
+                    alpha = (1/d)*dt;
+                
+                _this.setAlpha((_this._alpha < 1) ? parseFloat(alpha) : 1);
+                
+                if (dt > d) {
+                    t.stop();
+                }
+            };
+            t.start();
+        },
+
+        /**
+         * fades screen object out
+         * @param  {integer} [duration=1] Duration
+         * @return void
+         */
+        fadeOut: function(duration) {
+            
+            var _this = this,
+                d = duration || 1,
+                t = new GFW.Timer(),
+                startTime = t.getTime();
+
+            t.onTick = function() {
+
+                var dt = (t.getTime() - startTime) / 1000,
+                    alpha = (1/d)*dt;
+
+                 _this.setAlpha((_this._alpha > 0) ? 1 - parseFloat(alpha) : 0);
+                
+                if (dt > d) {
+                    t.stop();
+                }
+            };
+            t.start();
+        }
+    });
+    
+    /**
+     * Timer class
+     * @class Creates a timer object used in the game
+     * @author Rocco Janse, roccojanse@outlook.com
+     * @constructor
+     */
+    GFW.Timer = function() {
+        /** @lends GFW.Timer */
+
+        // properties
+        this._date = new Date();
+        this._ticks = 0;
+        this._animId = null;
+        this._isPaused = false;
+
+        console.log(this);
+
+    };
+
+    $.extend(GFW.Timer.prototype, /** @lends GFW.Timer */ {
+
+        _tick: function() {
+            this._animId = window.requestAnimationFrame(this._tick.bind(this));
+            this.onTick();
+        },
+
+        getTime: function() {
+            return new Date().getTime();
+        },
+        
+        onTick: function() {
+            if (!this._isPaused) {
+                this._ticks += 1;
+            }
+        },
+
+        start: function() {
+            this._tick();
+        },
+
+        pause: function() {
+            this._isPaused = !this._isPaused;
+        },
+
+        stop: function() {
+
+            window.cancelAnimationFrame(this._animId);
+
+            var result = this._tick;
+            this._tick = 0;
+            this._isPaused = false;
+
+            return result;
+        },
+
+        isPaused: function() {
+            return this._isPaused;
         }
 
     });
-    
+
     /**
      * Object class
      * @class Base class for all game objects. Should be extended.
@@ -1289,6 +1413,7 @@ var HANDJS = HANDJS || {};
 
         // variables
         // var _this = this;
+        this._loopCount = 0;
             
         // properties
         this._$container = $('#game-container');
@@ -1308,6 +1433,9 @@ var HANDJS = HANDJS || {};
             'PLAYING': 3
         };
 
+        // ingame screens
+        this._screens = {};
+
         // do init
         this.init();
 
@@ -1323,6 +1451,9 @@ var HANDJS = HANDJS || {};
 
             var _this = this,
                 _winWidth = $(window).width();
+
+            // define gingame screens
+            this._screens.splash = new GFW.Screen('splash', this._$container).setAlpha(0);
 
             // set gamestate to init
             this._gameState = this._gameStates.INIT;
@@ -1346,16 +1477,17 @@ var HANDJS = HANDJS || {};
 
             AssetManager.onComplete = function() {
 
-                // create screen
-                var splashScreen = new GFW.Screen('splash', _this._$container);
-
                 // add objects to splash screen
                 var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
                 var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
                 copy.setCentered();
 
-                console.log('ADDED', splashScreen.add(splash));
-                console.log(splashScreen.add(copy));
+                _this._screens.splash.add(splash);
+                _this._screens.splash.add(copy);
+
+                _this._screens.splash.fadeIn();
+
+                _this.start();
  
             };
 
@@ -1374,16 +1506,27 @@ var HANDJS = HANDJS || {};
          * @return void
          */
         mainLoop: function() {
-
+            this._loopCount += 1;
             var tm = new Date().getTime();
             this._reqAnimId = window.requestAnimationFrame(this.mainLoop.bind(this));
             var dt = (tm - this._lastFrame) / 1000;
             if(dt > 1/15) { dt = 1/15; }
             
+            if (this._gameState === this._gameStates.INIT) {
+
+                this._screens.splash.update(dt);
+            }
+
+            
+
             //this.physics.step(dt);
             //this.renderer.drawFrame(dt);
             this._lastFrame = tm;
 
+            if (this._loopCount > 400) {
+                console.log('stopped gameloop.');
+                this.stop();
+            }
         },
 
         /**

@@ -9,6 +9,7 @@ module.exports = function(grunt) {
 		'src/js/gfw/AssetManager.js',
 		'src/js/gfw/ObjectManager.js',
 		'src/js/gfw/Screen.js',
+		'src/js/gfw/Timer.js',
 		'src/js/gfw/Object.js',
 		'src/js/gfw/Text.js',
 		'src/js/gfw/Sprite.js',

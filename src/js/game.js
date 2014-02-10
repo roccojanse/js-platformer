@@ -9,6 +9,7 @@
 
         // variables
         // var _this = this;
+        this._loopCount = 0;
             
         // properties
         this._$container = $('#game-container');
@@ -28,6 +29,9 @@
             'PLAYING': 3
         };
 
+        // ingame screens
+        this._screens = {};
+
         // do init
         this.init();
 
@@ -43,6 +47,9 @@
 
             var _this = this,
                 _winWidth = $(window).width();
+
+            // define gingame screens
+            this._screens.splash = new GFW.Screen('splash', this._$container).setAlpha(0);
 
             // set gamestate to init
             this._gameState = this._gameStates.INIT;
@@ -66,16 +73,17 @@
 
             AssetManager.onComplete = function() {
 
-                // create screen
-                var splashScreen = new GFW.Screen('splash', _this._$container);
-
                 // add objects to splash screen
                 var splash = new GFW.Sprite(AssetManager.get('splash').path, _this._width, _this._height, 0, 0, 0, 0, 0);
                 var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
                 copy.setCentered();
 
-                console.log('ADDED', splashScreen.add(splash));
-                console.log(splashScreen.add(copy));
+                _this._screens.splash.add(splash);
+                _this._screens.splash.add(copy);
+
+                _this._screens.splash.fadeIn();
+
+                _this.start();
  
             };
 
@@ -94,16 +102,27 @@
          * @return void
          */
         mainLoop: function() {
-
+            this._loopCount += 1;
             var tm = new Date().getTime();
             this._reqAnimId = window.requestAnimationFrame(this.mainLoop.bind(this));
             var dt = (tm - this._lastFrame) / 1000;
             if(dt > 1/15) { dt = 1/15; }
             
+            if (this._gameState === this._gameStates.INIT) {
+
+                this._screens.splash.update(dt);
+            }
+
+            
+
             //this.physics.step(dt);
             //this.renderer.drawFrame(dt);
             this._lastFrame = tm;
 
+            if (this._loopCount > 400) {
+                console.log('stopped gameloop.');
+                this.stop();
+            }
         },
 
         /**
