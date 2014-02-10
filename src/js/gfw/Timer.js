@@ -46,8 +46,8 @@
 
             window.cancelAnimationFrame(this._animId);
 
-            var result = this._tick;
-            this._tick = 0;
+            var result = this._ticks;
+            this._ticks = 0;
             this._isPaused = false;
 
             return result;
