@@ -13,35 +13,58 @@
         this._animId = null;
         this._isPaused = false;
 
-        console.log(this);
-
     };
 
     $.extend(GFW.Timer.prototype, /** @lends GFW.Timer */ {
 
+        /**
+         * game tick
+         * @private
+         * @return void
+         */
         _tick: function() {
             this._animId = window.requestAnimationFrame(this._tick.bind(this));
             this.onTick();
         },
 
+        /**
+         * returns current timestamp
+         * @return {integer} Timestamp of now
+         */
         getTime: function() {
             return new Date().getTime();
         },
         
+        /**
+         * default onTick handler. Triggered by the private game _tick method. Should be overridden.
+         * @return void
+         */
         onTick: function() {
             if (!this._isPaused) {
                 this._ticks += 1;
             }
         },
 
+        /**
+         * starts timer
+         * @return void
+         */
         start: function() {
             this._tick();
         },
 
+        /**
+         * pauses timer
+         * @return void
+         */
         pause: function() {
             this._isPaused = !this._isPaused;
         },
 
+        /**
+         * stops timer
+         * @return void
+         */
         stop: function() {
 
             window.cancelAnimationFrame(this._animId);
@@ -53,6 +76,10 @@
             return result;
         },
 
+        /**
+         * returns paused state of timer
+         * @return {boolean} True or false
+         */
         isPaused: function() {
             return this._isPaused;
         }
