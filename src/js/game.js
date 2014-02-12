@@ -27,7 +27,7 @@
         this._gameStates = {
             'INIT': 0,
             'LOADING': 1,
-            'MAINMENU': 2,
+            'TITLE': 2,
             'PLAYING': 3
         };
 
@@ -42,7 +42,11 @@
         this._screens = {};
 
         // define splash screen
-        this._screens.splash = new GFW.Screen('splash', _this._$container).setAlpha(0);
+        //this._screens.splash = new GFW.Screen('splash', _this._$container).setAlpha(0);
+        this._screens.splash = new GFW.Screen.Splash(_this._$container);
+        this._screens.title = new GFW.Screen.Title(_this._$container);
+
+        console.log(ObjectManager);
 
         // set event handlers
         $(window).on({
@@ -59,6 +63,10 @@
 
     $.extend(Game.prototype, /** @lends Game */ {
 
+        /**
+         * initializes game
+         * @return void
+         */
         init: function() {
 
             var _this = this;
@@ -66,47 +74,28 @@
             this._gameState = this._gameStates.INIT;
 
             // add splash screen assets
-            AssetManager.add('splash', {
+            AssetManager.add('bg-splash', {
                 path: 'assets/img/bg-splash.png',
                 type: 'image'
             });
 
             AssetManager.onComplete = function() {
 
-
-
                 // add objects to splash screen
-                var splash = new GFW.Sprite(AssetManager.get('splash').path, 1024, 768, 0, 0, 0, 0, 0);
+                var splash = new GFW.Sprite(AssetManager.get('bg-splash').path, 1024, 768, 0, 0, 0, 0, 0);
                 splash.resize(_this._scaleFactor);
-                
-                var copy = new GFW.Text('(c)2014 OneManClan. Created by Rocco Janse, roccojanse@outlook.com', 'arial', 14, 'rgb(255, 255, 255)', 0, Math.round((_this._height*_this._scaleFactor)-25), _this._width, 25);
-                copy.setCentered();
-
                 _this._screens.splash.add(splash);
-                _this._screens.splash.add(copy);
 
-                _this._screens.splash.fadeIn();
+                // start splash
+                _this._screens.splash.show(_this);
 
-                var t = new GFW.Timer();
-                t.onTick = function() {
-                    var dt = t.getDelta();
-                    if (dt > 3) {
-                        t.stop();
-                        _this._screens.splash.fadeOut();
-                    }
-                };
-                t.start();
-
-                _this.start();
 
             };
 
-            AssetManager.onProgress = function(t, l, p) {
-                console.log(t, l, p);
-            };
-
+            // start loading assets
             AssetManager.load();
 
+            return this;
         },
 
         /**
@@ -125,6 +114,11 @@
             this._$container.width(this._width);
             this._$container.height(this._height);
 
+            this._$container.css({
+                'width': this._width,
+                'height': this._height
+            });
+
         },
 
         /**
@@ -142,7 +136,9 @@
             //if(dt > 1/15) { dt = 1/15; }
             
             if (this._gameState === this._gameStates.INIT) {
+                
                 this._screens.splash.update(dt);
+            
             }
 
             var objects = ObjectManager.getObjects();
@@ -165,7 +161,6 @@
          * @return void
          */
         start: function() {
-
             this.mainLoop();
         },
 
@@ -182,6 +177,10 @@
             window.cancelAnimationFrame(animId);
         },
 
+        /**
+         * resizes the game
+         * @return void
+         */
         resize: function() {
             this.setScale();
             var objects = ObjectManager.getObjects();

@@ -38,10 +38,10 @@
         },
 
         /**
-         * updates screen in game loop
+         * updates screen
          * @return void
          */
-        update: function(dt) {
+        update: function() {
             this._$object.css({
                 'opacity': this._alpha
             });
@@ -59,10 +59,11 @@
 
         /**
          * fades screen object in
+         * @param  {function} [callback] Callback function
          * @param  {integer} [duration=1] Duration
          * @return void
          */
-        fadeIn: function(duration) {
+        fadeIn: function(callback, duration) {
 
             var _this = this,
                 d = duration || 1,
@@ -75,9 +76,13 @@
                     alpha = (1/d)*dt;
                 
                 _this.setAlpha((_this._alpha < 1) ? parseFloat(alpha) : 1);
+                _this.update();
                 
                 if (dt > d) {
                     t.stop();
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
                 }
             };
             t.start();
@@ -85,10 +90,11 @@
 
         /**
          * fades screen object out
+         * @param  {function} [callback] Callback function
          * @param  {integer} [duration=1] Duration
          * @return void
          */
-        fadeOut: function(duration) {
+        fadeOut: function(callback, duration) {
             
             var _this = this,
                 d = duration || 1,
@@ -101,9 +107,13 @@
                     alpha = (1/d)*dt;
 
                  _this.setAlpha((_this._alpha > 0) ? 1 - parseFloat(alpha) : 0);
+                 _this.update();
                 
                 if (dt > d) {
                     t.stop();
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
                 }
             };
             t.start();

@@ -13,6 +13,8 @@ module.exports = function(grunt) {
 		'src/js/gfw/Object.js',
 		'src/js/gfw/Text.js',
 		'src/js/gfw/Sprite.js',
+		'src/js/gfw/screen/Splash.js',
+		'src/js/gfw/screen/Title.js',
 		'src/js/Game.js' 
 	];
 	

@@ -32,12 +32,12 @@
             'left': this._pos.x,
             'width': this._width,
             'height': this._height,
-            '-webkit-transform': 'rotate(' + r + 'deg)',
-            '-moz-transform': 'rotate(' + r + 'deg)',
-            '-o-transform': 'rotate(' + r + 'deg)',
-            '-ms-transform': 'rotate(' + r + 'deg)',
-            'transform': 'rotate(' + r + 'deg)',
-            'opacity': 1
+            '-webkit-transform': 'rotate(' + this._rotation + 'deg)',
+            '-moz-transform': 'rotate(' + this._rotation + 'deg)',
+            '-o-transform': 'rotate(' + this._rotation + 'deg)',
+            '-ms-transform': 'rotate(' + this._rotation + 'deg)',
+            'transform': 'rotate(' + this._rotation + 'deg)',
+            'opacity': this._alpha
         });
 
         return this;
@@ -95,6 +95,7 @@
         resize: function(scale) {
             this._width = this._dwidth*scale;
             this._height = this._dheight*scale;
+            this.update();
         },
 
         /**
@@ -112,7 +113,7 @@
                 '-o-transform': 'rotate(' + this._rotation + 'deg)',
                 '-ms-transform': 'rotate(' + this._rotation + 'deg)',
                 'transform': 'rotate(' + this._rotation + 'deg)',
-                'opacity': 1
+                'opacity': this._alpha
             });
         },
         
